@@ -360,7 +360,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:18px 0}
 
     <div class="card box" style="margin-top:16px" id="syncCard">
       <h3>Sincronização na nuvem (Firebase)</h3>
-      <p class="hint">Conecte uma vez em cada aparelho com sua conta Google e o álbum fica igual no celular e no PC. Os dados também continuam salvos offline aqui no navegador.</p>
+      <p class="hint">Álbum compartilhado: em qualquer PC ou celular, abra o link e clique em <b>Entrar com Google</b>. Só e-mails autorizados (na lista das regras do Firestore) conseguem ver e editar. Os dados também ficam salvos offline neste navegador.</p>
       <div id="syncStatus" class="sync-status off">○ Desconectado</div>
       <div class="row" style="margin-top:12px">
         <button class="btn grass" id="googleSignIn" style="display:none">Entrar com Google</button>
@@ -892,23 +892,40 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRe
 import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// Config do Firebase embutida — quem você autorizar só precisa abrir o link e entrar com o Google.
+// (Estas chaves são públicas por natureza; a segurança vem das Regras do Firestore com a lista de e-mails.)
+const BAKED_FB_CONFIG = {
+  apiKey: "AIzaSyAIhS9cNroWPiyOW7g3vvW8cOZrnPzWaYY",
+  authDomain: "album-copa-2026-17586.firebaseapp.com",
+  projectId: "album-copa-2026-17586",
+  storageBucket: "album-copa-2026-17586.firebasestorage.app",
+  messagingSenderId: "641958900906",
+  appId: "1:641958900906:web:55b5e245e640855c1b8cd3"
+};
+const ALBUM_DOC = "shared"; // todos os autorizados usam o MESMO álbum
+
 let app=null, auth=null, db=null, provider=null, user=null, unsub=null;
 let pushTimer=null;
 const status = (k,i)=>{ try{ window.onCloudStatus(k,i); }catch(e){} };
+function friendlyErr(e){
+  const c=(e&&(e.code||e.message)||"")+"";
+  if(/permission-denied|insufficient/i.test(c)) return "sua conta não está autorizada — peça pro dono liberar seu e-mail";
+  return (e&&e.message)||"erro";
+}
 
 function subscribe(){
   if(unsub){ unsub(); unsub=null; }
   if(!user) return;
-  unsub = onSnapshot(doc(db,"albums",user.uid), snap=>{
+  unsub = onSnapshot(doc(db,"albums",ALBUM_DOC), snap=>{
     if(snap.metadata.hasPendingWrites) return;          // ignora a própria escrita
     if(!snap.exists()){ pushNow(window.cloudGetPayload()); return; } // primeira vez: semeia a nuvem
     window.onCloudPull(snap.data().payload);
-  }, err=> status("error", err.message));
+  }, err=> status("error", friendlyErr(err)));
 }
 function pushNow(payload){
   if(!user || !db) return;
-  setDoc(doc(db,"albums",user.uid), {payload, updatedAt: serverTimestamp()})
-    .catch(e=> status("error", e.message));
+  setDoc(doc(db,"albums",ALBUM_DOC), {payload, updatedAt: serverTimestamp()})
+    .catch(e=> status("error", friendlyErr(e)));
 }
 window.cloudPush = function(payload){
   if(!user) return;
@@ -945,10 +962,14 @@ async function signOut(){ try{ if(auth) await fbSignOut(auth); }catch(e){} }
 
 window.FB = { connect, signIn, signOut };
 
-// auto-conecta se já houver config salva neste aparelho
+// auto-conecta: usa a config embutida (todo mundo) ou, se não houver, a salva neste aparelho
 try{
-  const saved = localStorage.getItem("copa2026_fbconfig");
-  if(saved) connect(JSON.parse(saved));
+  if(BAKED_FB_CONFIG && BAKED_FB_CONFIG.apiKey){
+    connect(BAKED_FB_CONFIG);
+  } else {
+    const saved = localStorage.getItem("copa2026_fbconfig");
+    if(saved) connect(JSON.parse(saved));
+  }
 }catch(e){}
 </script>
 </body>
