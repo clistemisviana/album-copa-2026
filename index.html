@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Álbum Copa 2026 — Controle de Figurinhas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pitch:#0E5C33;        /* gramado fundo */
+  --pitch-deep:#0A4527;
+  --grass:#1B7A43;        /* tenho */
+  --paper:#EEF1EC;        /* página do álbum */
+  --paper-card:#F7F8F4;
+  --ink:#13241B;          /* texto */
+  --ink-soft:#4A5A50;
+  --gold:#E0A82E;         /* especiais / repetidas */
+  --gold-deep:#B9851A;
+  --clay:#C2452D;         /* falta */
+  --clay-soft:#E6BDB4;
+  --line:#D6DDD4;
+  --white:#FFFFFF;
+  --shadow:0 1px 2px rgba(13,36,22,.08),0 6px 18px rgba(13,36,22,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.45;
+}
+h1,h2,h3,.disp{font-family:'Archivo','Inter',sans-serif;}
+
+/* ---------- Topo ---------- */
+header.app{
+  background:linear-gradient(160deg,var(--pitch) 0%,var(--pitch-deep) 100%);
+  color:#fff;
+  padding:18px 20px 0;
+  position:relative;
+  overflow:hidden;
+}
+header.app::after{ /* linha do meio campo */
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 50% -40%, rgba(255,255,255,.10), transparent 60%),
+    repeating-linear-gradient(90deg, transparent 0 38px, rgba(255,255,255,.025) 38px 76px);
+  pointer-events:none;
+}
+.brand{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.crest{
+  width:42px;height:42px;border-radius:11px;flex:none;
+  background:var(--gold);color:var(--pitch-deep);
+  display:grid;place-items:center;font-family:'Archivo';font-weight:900;font-size:20px;
+  box-shadow:0 3px 0 var(--gold-deep);
+}
+.brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:.3px;line-height:1.05}
+.brand .sub{font-size:12px;opacity:.8;font-weight:500;margin-top:2px}
+.brand .meta{margin-left:auto;text-align:right;font-size:11px;opacity:.75}
+
+/* abas */
+nav.tabs{display:flex;gap:2px;margin-top:16px;position:relative;z-index:1;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  appearance:none;border:0;background:transparent;color:rgba(255,255,255,.7);
+  font-family:'Archivo';font-weight:700;font-size:13.5px;letter-spacing:.3px;
+  padding:11px 15px;cursor:pointer;white-space:nowrap;border-radius:9px 9px 0 0;
+  transition:.15s;
+}
+nav.tabs button:hover{color:#fff}
+nav.tabs button.active{background:var(--paper);color:var(--pitch-deep)}
+
+/* ---------- Layout ---------- */
+main{max-width:1080px;margin:0 auto;padding:20px 16px 80px}
+.view{display:none;animation:fade .25s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.card{background:var(--paper-card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+
+/* ---------- Painel / stats ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.stat{padding:16px 18px;border-radius:14px;background:var(--paper-card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.stat .num{font-family:'Archivo';font-weight:900;font-size:30px;line-height:1}
+.stat .lbl{font-size:12px;color:var(--ink-soft);font-weight:600;margin-top:5px;text-transform:uppercase;letter-spacing:.4px}
+.stat.big{grid-column:span 2;background:linear-gradient(150deg,var(--grass),var(--pitch))}
+.stat.big .num,.stat.big .lbl{color:#fff}
+.stat.big .lbl{opacity:.85}
+.stat.falta .num{color:var(--clay)}
+.stat.rep .num{color:var(--gold-deep)}
+@media(max-width:520px){.stat.big{grid-column:span 2}}
+
+.ring{--p:0;width:104px;height:104px;border-radius:50%;flex:none;
+  background:conic-gradient(var(--gold) calc(var(--p)*1%), rgba(255,255,255,.25) 0);
+  display:grid;place-items:center;position:relative}
+.ring::before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--pitch-deep)}
+.ring span{position:relative;font-family:'Archivo';font-weight:900;font-size:24px;color:#fff}
+.panel-hero{display:flex;align-items:center;gap:20px;padding:20px;margin-bottom:18px;border-radius:16px;
+  background:linear-gradient(150deg,var(--grass),var(--pitch-deep));color:#fff;box-shadow:var(--shadow)}
+.panel-hero .ht{font-family:'Archivo';font-weight:800;font-size:20px}
+.panel-hero .hs{font-size:13px;opacity:.85;margin-top:3px}
+
+.sec-progress{margin-top:6px}
+.sec-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.sec-row:last-child{border-bottom:0}
+.sec-row .nm{font-weight:600;font-size:14px;min-width:120px}
+.sec-row .nm small{display:block;color:var(--ink-soft);font-weight:500;font-size:11px}
+.bar{flex:1;height:9px;border-radius:6px;background:#E3E8E1;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--grass),var(--gold))}
+.sec-row .pct{font-family:'Archivo';font-weight:800;font-size:14px;min-width:54px;text-align:right}
+.sec-row.done .pct{color:var(--grass)}
+
+/* ---------- Coleção ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--white);color:var(--ink-soft);
+  font-family:'Archivo';font-weight:700;font-size:12.5px;padding:8px 13px;border-radius:999px;cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--grass)}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .c{display:inline-block;min-width:18px;text-align:center;margin-left:5px;font-size:11px;opacity:.7}
+.chip.active .c{opacity:.9}
+.search{flex:1;min-width:140px;display:flex;align-items:center;gap:8px;background:var(--white);
+  border:1px solid var(--line);border-radius:999px;padding:0 14px}
+.search input{border:0;outline:0;background:transparent;font:inherit;padding:9px 0;width:100%;font-size:14px}
+.search svg{flex:none;opacity:.5}
+
+.album-sec{margin-bottom:18px;overflow:hidden}
+.album-sec .head{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--paper-card);border-bottom:1px solid var(--line)}
+.album-sec .head .tag{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;
+  font-family:'Archivo';font-weight:800;font-size:13px;background:var(--grass);color:#fff}
+.album-sec .head .tag.sp{background:var(--gold);color:var(--pitch-deep)}
+.album-sec .head .t{font-family:'Archivo';font-weight:800;font-size:15px}
+.album-sec .head .t small{display:block;font-family:'Inter';font-weight:500;font-size:11px;color:var(--ink-soft)}
+.album-sec .head .frac{margin-left:auto;font-family:'Archivo';font-weight:800;font-size:14px;color:var(--ink-soft)}
+.album-sec .head .minibar{width:80px;height:7px;border-radius:5px;background:#E3E8E1;overflow:hidden}
+.album-sec .head .minibar i{display:block;height:100%;background:var(--grass)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px;padding:14px 16px}
+.cell{position:relative;aspect-ratio:3/4;border-radius:9px;border:1.5px dashed var(--line);
+  background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;transition:transform .08s, background .15s, border-color .15s}
+.cell:hover{transform:translateY(-2px)}
+.cell .code{font-family:'Archivo';font-weight:800;font-size:13px;color:var(--ink-soft)}
+.cell.have{background:var(--grass);border:1.5px solid var(--grass)}
+.cell.have .code{color:#fff}
+.cell.special{border-color:var(--gold)}
+.cell.special.have{background:linear-gradient(135deg,var(--grass),var(--gold-deep))}
+.cell.special .star{position:absolute;top:3px;left:4px;font-size:9px;color:var(--gold)}
+.cell.have .star{color:#fff}
+.cell .dupe{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--pitch-deep);
+  font-family:'Archivo';font-weight:900;font-size:10px;min-width:18px;height:18px;border-radius:9px;
+  display:grid;place-items:center;padding:0 4px;box-shadow:0 2px 5px rgba(0,0,0,.2);border:2px solid var(--paper-card)}
+.cell .minus{position:absolute;bottom:-6px;right:-6px;width:18px;height:18px;border-radius:9px;
+  background:var(--clay);color:#fff;display:none;align-items:center;justify-content:center;font-size:14px;
+  line-height:1;border:2px solid var(--paper-card);box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.cell.have .minus{display:flex}
+.cell.hidden{display:none}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+.cell.just .dupe,.cell.just{animation:pop .25s}
+
+/* ---------- Entrada rápida ---------- */
+.box{padding:18px;margin-bottom:16px}
+.box h3{margin:0 0 4px;font-size:16px}
+.box p.hint{margin:0 0 14px;color:var(--ink-soft);font-size:13px}
+textarea,.txt{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font:inherit;
+  font-size:15px;resize:vertical;outline:0;background:var(--white)}
+textarea:focus,.txt:focus{border-color:var(--grass)}
+.btn{appearance:none;border:0;border-radius:11px;font-family:'Archivo';font-weight:800;font-size:14px;
+  padding:12px 20px;cursor:pointer;transition:.15s;letter-spacing:.3px}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover{background:#0a1812}
+.btn.grass{background:var(--grass);color:#fff}
+.btn.gold{background:var(--gold);color:var(--pitch-deep)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--ink)}
+.btn.danger{background:transparent;border:1.5px solid var(--clay-soft);color:var(--clay)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.entry-log{margin-top:14px;font-size:13px}
+.entry-log .added{color:var(--grass);font-weight:600}
+.entry-log .nf{color:var(--clay);font-weight:600}
+.entry-log .ln{padding:5px 0;border-bottom:1px dashed var(--line)}
+
+/* ---------- Trocas ---------- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:680px){.two{grid-template-columns:1fr}}
+.list-out{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  font-family:'Archivo';font-weight:600;font-size:13.5px;line-height:1.9;max-height:220px;overflow:auto;
+  word-break:break-word;color:var(--ink)}
+.list-out:empty::before{content:"— nada por aqui —";color:var(--ink-soft);font-weight:500;font-style:italic}
+.match-give{color:var(--grass);font-weight:700}
+.match-get{color:var(--gold-deep);font-weight:700}
+.pill{display:inline-block;background:#E8EFE8;border-radius:6px;padding:2px 7px;margin:2px 3px 2px 0;font-size:12.5px}
+.pill.give{background:#DDF0E2;color:var(--pitch-deep)}
+.pill.get{background:#F8ECCB;color:var(--gold-deep)}
+.balance{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--paper-card);border:1px solid var(--line);font-size:13px}
+
+/* ---------- Álbum config ---------- */
+table.cfg{width:100%;border-collapse:collapse;font-size:13.5px}
+table.cfg th{text-align:left;font-family:'Archivo';font-weight:700;font-size:12px;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--ink-soft);padding:8px 10px;border-bottom:2px solid var(--line)}
+table.cfg td{padding:7px 10px;border-bottom:1px solid var(--line)}
+table.cfg input,table.cfg select{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit;font-size:13px;width:100%;background:var(--white)}
+table.cfg input.w-prefix{max-width:90px}
+table.cfg input.w-count{max-width:70px}
+.del-x{background:transparent;border:0;color:var(--clay);cursor:pointer;font-size:18px;line-height:1;padding:4px 8px}
+.note{background:#FBF3DD;border:1px solid #EBD79A;border-radius:11px;padding:12px 14px;font-size:13px;color:#6b5a1e;margin-bottom:16px}
+.note b{color:#5a4a12}
+
+.syncpill{appearance:none;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;
+  font-family:'Archivo';font-weight:700;font-size:11px;padding:5px 11px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.syncpill.ok{background:rgba(46,204,113,.25);border-color:rgba(46,204,113,.5)}
+.syncpill.warn{background:rgba(224,168,46,.25);border-color:rgba(224,168,46,.55)}
+.syncpill.err{background:rgba(194,69,45,.3);border-color:rgba(194,69,45,.6)}
+.sync-status{font-family:'Archivo';font-weight:700;font-size:14px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--white)}
+.sync-status.off{color:var(--ink-soft)}
+.sync-status.ok{color:var(--grass);background:#E8F4EC;border-color:#BFE0CB}
+.sync-status.warn{color:var(--gold-deep);background:#FBF3DD;border-color:#EBD79A}
+.sync-status.err{color:var(--clay);background:#FBEAE6;border-color:var(--clay-soft)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:.25s;z-index:99}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.empty{text-align:center;color:var(--ink-soft);padding:40px 20px;font-size:14px}
+hr.sep{border:0;border-top:1px solid var(--line);margin:18px 0}
+.foot{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:30px;opacity:.8}
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="brand">
+    <div class="crest">26</div>
+    <div>
+      <h1>Álbum Copa 2026</h1>
+      <div class="sub">Controle de figurinhas · tenho · falta · repetidas · troca</div>
+    </div>
+    <button class="syncpill" id="headSync" title="Sincronização na nuvem">○ offline</button>
+    <div class="meta" id="metaInfo"></div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-v="painel" class="active">Painel</button>
+    <button data-v="colecao">Coleção</button>
+    <button data-v="entrada">Entrada Rápida</button>
+    <button data-v="trocas">Trocas</button>
+    <button data-v="album">Álbum</button>
+  </nav>
+</header>
+
+<main>
+  <!-- PAINEL -->
+  <section class="view active" id="view-painel">
+    <div class="panel-hero">
+      <div class="ring" id="ring"><span id="ringPct">0%</span></div>
+      <div>
+        <div class="ht" id="heroTitle">Bora completar o álbum</div>
+        <div class="hs" id="heroSub">—</div>
+      </div>
+    </div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="card">
+      <div class="sec-row" style="background:var(--paper-card);font-family:'Archivo';font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft)">
+        Progresso por seção <span style="margin-left:auto">faltam menos primeiro</span>
+      </div>
+      <div class="sec-progress" id="secProgress"></div>
+    </div>
+  </section>
+
+  <!-- COLEÇÃO -->
+  <section class="view" id="view-colecao">
+    <div class="toolbar">
+      <button class="chip active" data-f="all">Todas <span class="c" id="cAll">0</span></button>
+      <button class="chip" data-f="falta">Falta <span class="c" id="cFalta">0</span></button>
+      <button class="chip" data-f="tenho">Tenho <span class="c" id="cTenho">0</span></button>
+      <button class="chip" data-f="rep">Repetidas <span class="c" id="cRep">0</span></button>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInput" placeholder="buscar código (ex: BRA5, 12)…">
+      </div>
+    </div>
+    <div id="albumWrap"></div>
+  </section>
+
+  <!-- ENTRADA -->
+  <section class="view" id="view-entrada">
+    <div class="card box">
+      <h3>Abriu pacote? Joga os códigos aqui.</h3>
+      <p class="hint">Digite ou cole os códigos separados por espaço, vírgula ou linha. Repetir o código soma +1.
+        Ex.: <b>BRA5 BRA5 ARG10 12 12 EST3</b></p>
+      <textarea id="entryText" rows="3" placeholder="BRA5, ARG10, 12…"></textarea>
+      <div class="row" style="margin-top:12px">
+        <button class="btn grass" id="entryAdd">Adicionar +1 em cada</button>
+        <button class="btn ghost" id="entryClear">Limpar caixa</button>
+      </div>
+      <div class="entry-log" id="entryLog"></div>
+    </div>
+  </section>
+
+  <!-- TROCAS -->
+  <section class="view" id="view-trocas">
+    <div class="two">
+      <div class="card box">
+        <h3>Minha lista de FALTA</h3>
+        <p class="hint">Os que estão em zero. Manda pro pessoal das trocas.</p>
+        <div class="list-out" id="outFalta"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn ghost" data-copy="outFalta">Copiar</button>
+          <button class="btn grass" data-wa="outFalta">WhatsApp</button>
+        </div>
+      </div>
+      <div class="card box">
+        <h3>Minhas REPETIDAS (pra troca)</h3>
+        <p class="hint">Tudo acima de 1. O número é quantas sobram.</p>
+        <div class="list-out" id="outRep"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn ghost" data-copy="outRep">Copiar</button>
+          <button class="btn gold" data-wa="outRep">WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card box" style="margin-top:16px">
+      <h3>Cruzar troca com um amigo</h3>
+      <p class="hint">Cole as listas do amigo e veja na hora o que combina. Funciona com qualquer formato (vírgula, espaço, linha).</p>
+      <div class="two">
+        <div>
+          <label style="font-family:'Archivo';font-weight:700;font-size:12.5px;color:var(--ink-soft)">FALTA do amigo (o que eu dou)</label>
+          <textarea id="friendFalta" rows="3" placeholder="cole aqui a falta dele…" style="margin-top:6px"></textarea>
+        </div>
+        <div>
+          <label style="font-family:'Archivo';font-weight:700;font-size:12.5px;color:var(--ink-soft)">REPETIDAS do amigo (o que eu pego)</label>
+          <textarea id="friendRep" rows="3" placeholder="cole aqui as repetidas dele…" style="margin-top:6px"></textarea>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="matchBtn">Cruzar listas</button>
+      </div>
+      <div id="matchResult" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- ÁLBUM -->
+  <section class="view" id="view-album">
+    <div class="note">
+      <b>Ajuste pro seu álbum real.</b> Esta é a estrutura inicial (seleções + seções especiais). Edite os nomes,
+      os prefixos de código e a <b>quantidade de figurinhas</b> de cada parte pra bater certinho com o seu álbum físico.
+      Tudo recalcula sozinho. <b>Importante:</b> cada seção precisa de um prefixo único (ex.: BRA, ARG) pra não embaralhar os códigos.
+    </div>
+    <div class="card box">
+      <h3>Seções do álbum</h3>
+      <table class="cfg">
+        <thead><tr><th>Nome</th><th>Prefixo</th><th>Qtd</th><th>Tipo</th><th></th></tr></thead>
+        <tbody id="cfgBody"></tbody>
+      </table>
+      <div class="row" style="margin-top:14px">
+        <button class="btn grass" id="addSec">+ Adicionar seção</button>
+      </div>
+    </div>
+
+    <div class="card box" style="margin-top:16px" id="syncCard">
+      <h3>Sincronização na nuvem (Firebase)</h3>
+      <p class="hint">Conecte uma vez em cada aparelho com sua conta Google e o álbum fica igual no celular e no PC. Os dados também continuam salvos offline aqui no navegador.</p>
+      <div id="syncStatus" class="sync-status off">○ Desconectado</div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn grass" id="googleSignIn" style="display:none">Entrar com Google</button>
+        <button class="btn ghost" id="googleSignOut" style="display:none">Sair</button>
+        <button class="btn ghost" id="toggleFbCfg">Configurar Firebase</button>
+      </div>
+      <div id="fbCfgBox" style="display:none;margin-top:14px">
+        <p class="hint">Cole o objeto <b>firebaseConfig</b> que você copiou do console do Firebase (Configurações do projeto → Seus apps → Web):</p>
+        <textarea id="fbCfgText" rows="8" placeholder="const firebaseConfig = {&#10;  apiKey: &quot;...&quot;,&#10;  authDomain: &quot;...&quot;,&#10;  projectId: &quot;...&quot;,&#10;  ...&#10;};"></textarea>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="fbConnectBtn">Salvar e conectar</button>
+          <button class="btn danger" id="fbForget">Esquecer config</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card box" style="margin-top:16px">
+      <h3>Backup e dados</h3>
+      <p class="hint">Seus dados ficam salvos neste navegador. Exporte de vez em quando pra não perder (e pra abrir em outro aparelho).</p>
+      <div class="row">
+        <button class="btn ghost" id="exportBtn">Exportar backup (.json)</button>
+        <button class="btn ghost" id="importBtn">Importar backup</button>
+        <input type="file" id="importFile" accept="application/json" hidden>
+        <button class="btn danger" id="resetBtn">Zerar coleção</button>
+      </div>
+    </div>
+    <div class="foot">Feito pra colar, trocar e completar. ⚽</div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const LS_KEY = "copa2026_tracker_v2";
+
+/* ---------- Estrutura inicial (editável na aba Álbum) ---------- */
+const T = (id,name,prefix,grp)=>({id,name:name+" ("+grp+")",prefix,count:20,type:"normal"});
+const DEFAULT_SECTIONS = [
+  {id:"abertura", name:"Abertura FIFA / FWC", prefix:"FWC", count:20, type:"special"},
+  // Grupo A
+  T("mex","México","MEX","A"), T("rsa","África do Sul","RSA","A"), T("kor","Coréia do Sul","KOR","A"), T("cze","República Tcheca","CZE","A"),
+  // Grupo B
+  T("can","Canadá","CAN","B"), T("bos","Bósnia","BOS","B"), T("qat","Catar","QAT","B"), T("sui","Suíça","SUI","B"),
+  // Grupo C
+  T("bra","Brasil","BRA","C"), T("mar","Marrocos","MAR","C"), T("hai","Haiti","HAI","C"), T("sco","Escócia","SCO","C"),
+  // Grupo D
+  T("usa","Estados Unidos","USA","D"), T("par","Paraguai","PAR","D"), T("aus","Austrália","AUS","D"), T("tur","Turquia","TUR","D"),
+  // Grupo E
+  T("ger","Alemanha","GER","E"), T("cwu","Curaçao","CWU","E"), T("civ","Costa do Marfim","CIV","E"), T("ecu","Equador","ECU","E"),
+  // Grupo F
+  T("ned","Holanda","NED","F"), T("jpn","Japão","JPN","F"), T("swe","Suécia","SWE","F"), T("tun","Tunísia","TUN","F"),
+  // Grupo G
+  T("bel","Bélgica","BEL","G"), T("egy","Egito","EGY","G"), T("irn","Irã","IRN","G"), T("nzl","Nova Zelândia","NZL","G"),
+  // Grupo H
+  T("esp","Espanha","ESP","H"), T("cpv","Cabo Verde","CPV","H"), T("ksa","Arábia Saudita","KSA","H"), T("uru","Uruguai","URU","H"),
+  // Grupo I
+  T("fra","França","FRA","I"), T("irq","Iraque","IRQ","I"), T("sen","Senegal","SEN","I"), T("nor","Noruega","NOR","I"),
+  // Grupo J
+  T("arg","Argentina","ARG","J"), T("alg","Argélia","ALG","J"), T("aut","Áustria","AUT","J"), T("jor","Jordânia","JOR","J"),
+  // Grupo K
+  T("por","Portugal","POR","K"), T("cod","Congo","COD","K"), T("uzb","Uzbequistão","UZB","K"), T("col","Colômbia","COL","K"),
+  // Grupo L
+  T("eng","Inglaterra","ENG","L"), T("cro","Croácia","CRO","L"), T("gha","Gana","GHA","L"), T("pan","Panamá","PAN","L"),
+];
+
+let state = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ const s = JSON.parse(raw); if(s && s.sections) return s; }
+  }catch(e){}
+  return { sections: structuredClone(DEFAULT_SECTIONS), qty:{}, meta:{updatedAt:Date.now()} };
+}
+function save(){
+  state.meta = state.meta||{}; state.meta.updatedAt = Date.now();
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch(e){ toast("Não consegui salvar (armazenamento bloqueado)."); }
+  if(window.cloudPush){ try{ window.cloudPush(JSON.stringify(state)); }catch(e){} }
+  renderMeta();
+}
+
+/* ---------- Helpers de código ---------- */
+const keyOf = (sec,n)=> sec.id+"|"+n;
+const codeOf = (sec,n)=> (sec.prefix||"") + n;
+const norm = s => (s||"").toString().toUpperCase().replace(/[\s\-_.]/g,"");
+function qtyOf(sec,n){ return state.qty[keyOf(sec,n)] || 0; }
+function setQty(sec,n,v){
+  const k = keyOf(sec,n);
+  if(v<=0) delete state.qty[k]; else state.qty[k]=v;
+}
+
+/* mapa código humano -> {sec,n} para a entrada rápida e cruzamento */
+function buildLookup(){
+  const m = new Map();
+  for(const sec of state.sections){
+    for(let n=1;n<=sec.count;n++){ m.set(norm(codeOf(sec,n)), {sec,n}); }
+  }
+  return m;
+}
+
+/* ---------- Stats ---------- */
+function computeStats(){
+  let total=0, tenho=0, faltam=0, repTotal=0, excedente=0;
+  for(const sec of state.sections){
+    for(let n=1;n<=sec.count;n++){
+      total++;
+      const q = qtyOf(sec,n);
+      if(q===0) faltam++;
+      else { tenho++; if(q>=2){ repTotal++; excedente += (q-1); } }
+    }
+  }
+  const pct = total? Math.round(tenho/total*100):0;
+  return {total,tenho,faltam,repTotal,excedente,pct};
+}
+
+/* ---------- Render: meta ---------- */
+function renderMeta(){
+  const d = new Date(state.meta?.updatedAt||Date.now());
+  document.getElementById("metaInfo").textContent =
+    "atualizado " + d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+
+/* ---------- Render: painel ---------- */
+function renderPainel(){
+  const s = computeStats();
+  document.getElementById("ringPct").textContent = s.pct+"%";
+  document.getElementById("ring").style.setProperty("--p", s.pct);
+  document.getElementById("heroTitle").textContent =
+    s.pct>=100 ? "Álbum completo! 🏆" : s.faltam+" figurinhas pra fechar";
+  document.getElementById("heroSub").textContent =
+    s.pct>=100 ? "Parabéns, colou tudo." :
+    `${s.tenho} de ${s.total} coladas · ${s.excedente} sobrando pra troca`;
+
+  document.getElementById("statGrid").innerHTML = `
+    <div class="stat big"><div class="num">${s.tenho}/${s.total}</div><div class="lbl">Figurinhas coladas</div></div>
+    <div class="stat falta"><div class="num">${s.faltam}</div><div class="lbl">Faltam</div></div>
+    <div class="stat rep"><div class="num">${s.repTotal}</div><div class="lbl">Repetidas (modelos)</div></div>
+    <div class="stat"><div class="num">${s.excedente}</div><div class="lbl">Sobrando p/ troca</div></div>
+    <div class="stat"><div class="num">${s.pct}%</div><div class="lbl">Completo</div></div>
+  `;
+
+  const rows = state.sections.map(sec=>{
+    let have=0; for(let n=1;n<=sec.count;n++) if(qtyOf(sec,n)>0) have++;
+    const pct = sec.count? Math.round(have/sec.count*100):0;
+    return {sec,have,pct};
+  }).sort((a,b)=> (a.sec.count-a.have)-(b.sec.count-b.have) || b.pct-a.pct );
+
+  document.getElementById("secProgress").innerHTML = rows.map(r=>`
+    <div class="sec-row ${r.pct>=100?'done':''}">
+      <div class="nm">${esc(r.sec.name)}<small>${r.have}/${r.sec.count}</small></div>
+      <div class="bar"><i style="width:${r.pct}%"></i></div>
+      <div class="pct">${r.pct>=100?'✓':r.pct+'%'}</div>
+    </div>`).join("") || '<div class="empty">Nenhuma seção. Crie na aba Álbum.</div>';
+}
+
+/* ---------- Render: coleção ---------- */
+let currentFilter="all";
+function renderColecao(){
+  const s = computeStats();
+  document.getElementById("cAll").textContent = s.total;
+  document.getElementById("cFalta").textContent = s.faltam;
+  document.getElementById("cTenho").textContent = s.tenho;
+  document.getElementById("cRep").textContent = s.repTotal;
+
+  const q = norm(document.getElementById("searchInput").value);
+  const wrap = document.getElementById("albumWrap");
+  wrap.innerHTML = "";
+
+  let anything=false;
+  for(const sec of state.sections){
+    let have=0; for(let n=1;n<=sec.count;n++) if(qtyOf(sec,n)>0) have++;
+    const pct = sec.count? Math.round(have/sec.count*100):0;
+
+    const cells=[];
+    for(let n=1;n<=sec.count;n++){
+      const qn = qtyOf(sec,n);
+      const status = qn===0?"falta":(qn>=2?"rep":"tenho");
+      if(currentFilter==="falta" && qn!==0) continue;
+      if(currentFilter==="tenho" && qn===0) continue;
+      if(currentFilter==="rep" && qn<2) continue;
+      const code = codeOf(sec,n);
+      if(q && !norm(code).includes(q)) continue;
+      anything=true;
+      const dup = qn>=2? `<span class="dupe">+${qn-1}</span>`:"";
+      const minus = `<span class="minus" data-sec="${sec.id}" data-n="${n}" data-act="minus">−</span>`;
+      const star = sec.type==="special"?'<span class="star">★</span>':"";
+      cells.push(`<div class="cell ${qn>0?'have':''} ${sec.type==='special'?'special':''}"
+        data-sec="${sec.id}" data-n="${n}" data-act="plus">
+        ${star}<span class="code">${esc(code)}</span>${dup}${minus}</div>`);
+    }
+    if(cells.length===0) continue;
+
+    const div=document.createElement("div");
+    div.className="card album-sec";
+    div.innerHTML=`
+      <div class="head">
+        <div class="tag ${sec.type==='special'?'sp':''}">${esc((sec.prefix||'#').slice(0,3))}</div>
+        <div class="t">${esc(sec.name)}<small>${esc(sec.prefix||'sem prefixo')} · ${sec.count} figurinhas</small></div>
+        <div class="minibar"><i style="width:${pct}%"></i></div>
+        <div class="frac">${have}/${sec.count}</div>
+      </div>
+      <div class="grid">${cells.join("")}</div>`;
+    wrap.appendChild(div);
+  }
+  if(!anything){
+    wrap.innerHTML = `<div class="empty">Nada aqui com esse filtro/busca.${currentFilter!=="all"?' Tente "Todas".':''}</div>`;
+  }
+}
+
+/* clique nas células (delegação) */
+document.getElementById("albumWrap").addEventListener("click", e=>{
+  const t = e.target.closest("[data-act]");
+  if(!t) return;
+  const sec = state.sections.find(x=>x.id===t.dataset.sec);
+  if(!sec) return;
+  const n = +t.dataset.n;
+  const cur = qtyOf(sec,n);
+  if(t.dataset.act==="plus") setQty(sec,n,cur+1);
+  else if(t.dataset.act==="minus"){ e.stopPropagation(); setQty(sec,n,Math.max(0,cur-1)); }
+  save();
+  // re-render leve
+  renderColecao(); renderPainel(); renderTrocas();
+  // animação na célula
+  const cell = document.querySelector(`.cell[data-sec="${sec.id}"][data-n="${n}"]`);
+  if(cell){ cell.classList.add("just"); setTimeout(()=>cell.classList.remove("just"),260); }
+});
+
+/* ---------- Entrada rápida ---------- */
+document.getElementById("entryAdd").addEventListener("click", ()=>{
+  const txt = document.getElementById("entryText").value;
+  const tokens = txt.split(/[\s,;]+/).map(norm).filter(Boolean);
+  if(!tokens.length){ toast("Digite alguns códigos primeiro."); return; }
+  const lookup = buildLookup();
+  const counts = {}; const notFound = {};
+  for(const tk of tokens){
+    if(lookup.has(tk)){
+      const {sec,n} = lookup.get(tk);
+      const k = keyOf(sec,n);
+      counts[k] = (counts[k]||0)+1;
+    } else { notFound[tk] = (notFound[tk]||0)+1; }
+  }
+  let addedCount=0, addedModels=0;
+  for(const k in counts){
+    state.qty[k] = (state.qty[k]||0) + counts[k];
+    addedCount += counts[k]; addedModels++;
+  }
+  save();
+  renderAll();
+  // log
+  const nf = Object.keys(notFound);
+  const log = document.getElementById("entryLog");
+  const stamp = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  let html = `<div class="ln"><span class="added">+${addedCount} figurinha(s)</span> em ${addedModels} código(s) · ${stamp}`;
+  if(nf.length) html += ` · <span class="nf">${nf.length} não reconhecido(s): ${nf.map(esc).join(", ")}</span>`;
+  html += `</div>`;
+  log.innerHTML = html + log.innerHTML;
+  document.getElementById("entryText").value="";
+  toast(`Adicionadas ${addedCount} figurinha(s).`);
+});
+document.getElementById("entryClear").addEventListener("click", ()=>{
+  document.getElementById("entryText").value="";
+});
+
+/* ---------- Trocas ---------- */
+function listFalta(){
+  const out=[];
+  for(const sec of state.sections) for(let n=1;n<=sec.count;n++) if(qtyOf(sec,n)===0) out.push(codeOf(sec,n));
+  return out;
+}
+function listRep(){
+  const out=[];
+  for(const sec of state.sections) for(let n=1;n<=sec.count;n++){ const q=qtyOf(sec,n); if(q>=2) out.push({code:codeOf(sec,n),extra:q-1}); }
+  return out;
+}
+function renderTrocas(){
+  const falta = listFalta();
+  const rep = listRep();
+  document.getElementById("outFalta").innerHTML = falta.map(esc).join(", ");
+  document.getElementById("outRep").innerHTML = rep.map(r=>esc(r.code)+(r.extra>1?` (${r.extra})`:"")).join(", ");
+}
+document.querySelectorAll("[data-copy]").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    const el = document.getElementById(b.dataset.copy);
+    const text = el.textContent.trim();
+    if(!text){ toast("Lista vazia."); return; }
+    navigator.clipboard?.writeText(text).then(()=>toast("Copiado!"),()=>fallbackCopy(text));
+  });
+});
+document.querySelectorAll("[data-wa]").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    const el = document.getElementById(b.dataset.wa);
+    const text = el.textContent.trim();
+    if(!text){ toast("Lista vazia."); return; }
+    const head = b.dataset.wa==="outFalta" ? "Tô precisando destas figurinhas da Copa:\n" : "Tenho estas repetidas pra trocar:\n";
+    window.open("https://wa.me/?text="+encodeURIComponent(head+text), "_blank");
+  });
+});
+function parsePasted(txt){
+  return new Set(txt.split(/[\s,;]+/).map(norm).filter(Boolean));
+}
+document.getElementById("matchBtn").addEventListener("click", ()=>{
+  const lookup = buildLookup();
+  const friendFalta = parsePasted(document.getElementById("friendFalta").value);
+  const friendRep   = parsePasted(document.getElementById("friendRep").value);
+
+  // o que eu DOU = minhas repetidas que estão na falta dele
+  const give=[];
+  for(const r of listRep()){ if(friendFalta.has(norm(r.code))) give.push(r.code); }
+  // o que eu PEGO = minha falta que está nas repetidas dele
+  const myFaltaSet = new Set(listFalta().map(norm));
+  const get=[];
+  for(const tk of friendRep){ if(myFaltaSet.has(tk) && lookup.has(tk)){ const {sec,n}=lookup.get(tk); get.push(codeOf(sec,n)); } }
+
+  const res = document.getElementById("matchResult");
+  if(friendFalta.size===0 && friendRep.size===0){ res.innerHTML='<div class="empty">Cole pelo menos uma lista do amigo.</div>'; return; }
+  res.innerHTML = `
+    <div class="row" style="align-items:flex-start;gap:18px">
+      <div style="flex:1;min-width:200px">
+        <div class="match-give">Você DÁ (${give.length})</div>
+        <div style="margin-top:6px">${give.length?give.map(c=>`<span class="pill give">${esc(c)}</span>`).join(""):'<span style="color:var(--ink-soft);font-size:13px">nada combina</span>'}</div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <div class="match-get">Você PEGA (${get.length})</div>
+        <div style="margin-top:6px">${get.length?get.map(c=>`<span class="pill get">${esc(c)}</span>`).join(""):'<span style="color:var(--ink-soft);font-size:13px">nada combina</span>'}</div>
+      </div>
+    </div>
+    <div class="balance">
+      ${balanceMsg(give.length,get.length)}
+    </div>`;
+});
+function balanceMsg(g,p){
+  if(g===0&&p===0) return "Nada bate dessa vez. 🤷";
+  const min=Math.min(g,p);
+  let m = `Troca casada possível: <b>${min} por ${min}</b>. `;
+  if(g>p) m+=`Você ainda tem ${g-p} sobrando que ele precisa (pode pedir algo a mais).`;
+  else if(p>g) m+=`Ele tem ${p-g} que te interessam além do empate (busque mais repetidas suas ou outro acerto).`;
+  else m+="Empate perfeito. ⚽";
+  return m;
+}
+
+/* ---------- Álbum (config) ---------- */
+function renderConfig(){
+  const body = document.getElementById("cfgBody");
+  body.innerHTML = state.sections.map((sec,i)=>`
+    <tr data-i="${i}">
+      <td><input data-k="name" value="${esc(sec.name)}"></td>
+      <td><input class="w-prefix" data-k="prefix" value="${esc(sec.prefix||'')}"></td>
+      <td><input class="w-count" data-k="count" type="number" min="1" max="999" value="${sec.count}"></td>
+      <td><select data-k="type">
+        <option value="normal" ${sec.type==='normal'?'selected':''}>Seleção</option>
+        <option value="special" ${sec.type==='special'?'selected':''}>Especial</option>
+      </select></td>
+      <td><button class="del-x" data-del="${i}" title="remover">✕</button></td>
+    </tr>`).join("");
+}
+document.getElementById("cfgBody").addEventListener("input", e=>{
+  const tr = e.target.closest("tr"); if(!tr) return;
+  const i = +tr.dataset.i; const k = e.target.dataset.k; if(k===undefined) return;
+  let v = e.target.value;
+  if(k==="count"){ v = Math.max(1, Math.min(999, parseInt(v)||1)); }
+  state.sections[i][k] = v;
+  save();
+});
+document.getElementById("cfgBody").addEventListener("click", e=>{
+  const del = e.target.closest("[data-del]"); if(!del) return;
+  const i = +del.dataset.del;
+  if(confirm(`Remover a seção "${state.sections[i].name}"? As figurinhas dela serão apagadas.`)){
+    const sec = state.sections[i];
+    for(let n=1;n<=sec.count;n++) delete state.qty[keyOf(sec,n)];
+    state.sections.splice(i,1);
+    save(); renderConfig(); renderAll();
+  }
+});
+document.getElementById("addSec").addEventListener("click", ()=>{
+  const id = "s"+Date.now().toString(36);
+  state.sections.push({id, name:"Nova seleção", prefix:"NEW"+(state.sections.length+1), count:18, type:"normal"});
+  save(); renderConfig();
+  toast("Seção adicionada — edite o nome e o prefixo.");
+});
+
+/* backup */
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download = "album-copa-2026-backup.json"; a.click();
+  URL.revokeObjectURL(url);
+  toast("Backup exportado.");
+});
+document.getElementById("importBtn").addEventListener("click", ()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change", e=>{
+  const file = e.target.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const s = JSON.parse(r.result);
+      if(!s.sections) throw new Error("formato inválido");
+      state = s; state.qty = state.qty||{};
+      save(); renderConfig(); renderAll();
+      toast("Backup importado!");
+    }catch(err){ toast("Arquivo inválido."); }
+  };
+  r.readAsText(file);
+  e.target.value="";
+});
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  if(confirm("Zerar a contagem de TODAS as figurinhas? (As seções continuam)")){
+    state.qty = {}; save(); renderAll();
+    toast("Coleção zerada.");
+  }
+});
+
+/* ---------- Util ---------- */
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let toastT;
+function toast(msg){
+  const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2200);
+}
+function fallbackCopy(text){
+  const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta);
+  ta.select(); try{document.execCommand("copy"); toast("Copiado!");}catch(e){toast("Copie manualmente.");}
+  document.body.removeChild(ta);
+}
+
+/* ---------- Navegação ---------- */
+document.getElementById("tabs").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-v]"); if(!b) return;
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.getElementById("view-"+b.dataset.v).classList.add("active");
+});
+document.querySelectorAll(".chip[data-f]").forEach(c=>{
+  c.addEventListener("click", ()=>{
+    document.querySelectorAll(".chip[data-f]").forEach(x=>x.classList.remove("active"));
+    c.classList.add("active"); currentFilter=c.dataset.f; renderColecao();
+  });
+});
+document.getElementById("searchInput").addEventListener("input", renderColecao);
+
+/* ---------- Ponte com a nuvem (Firebase) ---------- */
+const FB_CFG_KEY = "copa2026_fbconfig";
+
+window.cloudGetPayload = ()=> JSON.stringify(state);
+
+window.onCloudPull = function(payload){
+  try{
+    if(!payload) return;
+    if(payload === JSON.stringify(state)) return; // sem mudança
+    const s = JSON.parse(payload);
+    if(!s || !s.sections) return;
+    state = s; state.qty = state.qty||{};
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+    renderConfig(); renderAll();
+    toast("Sincronizado da nuvem ☁");
+  }catch(e){}
+};
+
+window.onCloudStatus = function(kind, info){
+  const box = document.getElementById("syncStatus");
+  const pill = document.getElementById("headSync");
+  const inBtn = document.getElementById("googleSignIn");
+  const outBtn = document.getElementById("googleSignOut");
+  const map = {
+    connecting:["warn","○ Conectando…","○ conectando"],
+    signedout: ["warn","◐ Projeto conectado — falta entrar com o Google","◐ entrar"],
+    connected: ["ok","● Sincronizando como "+(info||"conta Google"),"● sincronizado"],
+    error:     ["err","✕ Erro: "+(info||"falha"),"✕ erro"],
+    off:       ["off","○ Desconectado","○ offline"]
+  };
+  const m = map[kind]||map.off;
+  if(box){ box.className="sync-status "+m[0]; box.textContent=m[1]; }
+  if(pill){ pill.className="syncpill "+(m[0]==="off"?"":m[0]); pill.textContent=m[2]; }
+  if(inBtn) inBtn.style.display = (kind==="signedout")?"":"none";
+  if(outBtn) outBtn.style.display = (kind==="connected")?"":"none";
+};
+
+function parseFbConfig(txt){
+  const m = (txt||"").match(/\{[\s\S]*\}/);
+  if(!m) throw new Error("não achei o objeto { … }");
+  const obj = (new Function("return ("+m[0]+")"))();
+  if(!obj || !obj.apiKey || !obj.projectId) throw new Error("faltou apiKey/projectId");
+  return obj;
+}
+
+document.getElementById("toggleFbCfg").addEventListener("click", ()=>{
+  const b = document.getElementById("fbCfgBox");
+  b.style.display = b.style.display==="none" ? "block" : "none";
+});
+document.getElementById("fbConnectBtn").addEventListener("click", ()=>{
+  try{
+    const cfg = parseFbConfig(document.getElementById("fbCfgText").value);
+    localStorage.setItem(FB_CFG_KEY, JSON.stringify(cfg));
+    if(window.FB){ window.FB.connect(cfg); toast("Config salva. Conectando…"); }
+    else toast("Recarregue a página pra carregar o Firebase.");
+  }catch(e){ toast("Config inválida: "+e.message); }
+});
+document.getElementById("fbForget").addEventListener("click", ()=>{
+  if(confirm("Esquecer a configuração do Firebase neste aparelho? (os dados na nuvem continuam lá)")){
+    localStorage.removeItem(FB_CFG_KEY); location.reload();
+  }
+});
+document.getElementById("googleSignIn").addEventListener("click", ()=> window.FB && window.FB.signIn());
+document.getElementById("googleSignOut").addEventListener("click", ()=> window.FB && window.FB.signOut());
+document.getElementById("headSync").addEventListener("click", ()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+  document.querySelector('nav.tabs button[data-v="album"]').classList.add("active");
+  document.getElementById("view-album").classList.add("active");
+  document.getElementById("syncCard").scrollIntoView({behavior:"smooth",block:"center"});
+});
+// pré-preenche o textarea se já houver config salva
+(function(){
+  try{ const s=localStorage.getItem(FB_CFG_KEY); if(s){ document.getElementById("fbCfgText").value="const firebaseConfig = "+JSON.stringify(JSON.parse(s),null,2)+";"; } }catch(e){}
+})();
+
+/* ---------- Render geral ---------- */
+function renderAll(){ renderMeta(); renderPainel(); renderColecao(); renderTrocas(); }
+renderConfig();
+renderAll();
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+let app=null, auth=null, db=null, provider=null, user=null, unsub=null;
+let pushTimer=null;
+const status = (k,i)=>{ try{ window.onCloudStatus(k,i); }catch(e){} };
+
+function subscribe(){
+  if(unsub){ unsub(); unsub=null; }
+  if(!user) return;
+  unsub = onSnapshot(doc(db,"albums",user.uid), snap=>{
+    if(snap.metadata.hasPendingWrites) return;          // ignora a própria escrita
+    if(!snap.exists()){ pushNow(window.cloudGetPayload()); return; } // primeira vez: semeia a nuvem
+    window.onCloudPull(snap.data().payload);
+  }, err=> status("error", err.message));
+}
+function pushNow(payload){
+  if(!user || !db) return;
+  setDoc(doc(db,"albums",user.uid), {payload, updatedAt: serverTimestamp()})
+    .catch(e=> status("error", e.message));
+}
+window.cloudPush = function(payload){
+  if(!user) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(()=> pushNow(payload), 700);
+};
+
+function connect(config){
+  try{
+    app = initializeApp(config);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    provider = new GoogleAuthProvider();
+    status("connecting");
+    getRedirectResult(auth).catch(()=>{});
+    onAuthStateChanged(auth, u=>{
+      user = u;
+      if(u){ status("connected", u.email||u.displayName||"conta Google"); subscribe(); }
+      else { if(unsub){unsub();unsub=null;} status("signedout"); }
+    });
+  }catch(e){ status("error", e.message||"config inválida"); }
+}
+async function signIn(){
+  if(!auth) return status("error","conecte a config primeiro");
+  try{ await signInWithPopup(auth, provider); }
+  catch(e){
+    const code=(e&&(e.code||e.message)||"");
+    if(/popup|blocked|cancelled|operation-not-supported/i.test(code)){
+      try{ await signInWithRedirect(auth, provider); }catch(e2){ status("error", e2.message); }
+    } else status("error", e.message||"falha no login");
+  }
+}
+async function signOut(){ try{ if(auth) await fbSignOut(auth); }catch(e){} }
+
+window.FB = { connect, signIn, signOut };
+
+// auto-conecta se já houver config salva neste aparelho
+try{
+  const saved = localStorage.getItem("copa2026_fbconfig");
+  if(saved) connect(JSON.parse(saved));
+}catch(e){}
+</script>
+</body>
+</html>
