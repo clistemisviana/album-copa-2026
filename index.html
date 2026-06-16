@@ -89,8 +89,7 @@ main{max-width:1080px;margin:0 auto;padding:20px 16px 90px}
 .album-sec .head .frac small{display:block;font-family:'Inter';font-weight:600;font-size:10px;color:var(--ink-soft);opacity:.8}
 .album-sec .head .minibar{width:78px;height:6px;border-radius:5px;background:#E3E8E1;overflow:hidden;margin-top:5px}
 .album-sec .head .minibar i{display:block;height:100%;background:var(--grass)}
-.grid-scroll{overflow-x:auto}
-.grid{display:grid;gap:8px;padding:14px 16px;min-width:min-content}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px;padding:14px 16px}
 .cell{position:relative;aspect-ratio:3/4;min-width:46px;border-radius:9px;border:1.5px dashed var(--line);background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:transform .08s,background .15s,border-color .15s}
 .cell:hover{transform:translateY(-2px)}
 .cell .code{font-family:'Archivo';font-weight:800;font-size:13px;color:var(--ink-soft)}
@@ -396,14 +395,13 @@ function renderColecao(){
     if(currentFilter==="falta")fracHTML=`<div class="frac">${ss.falta}/${sec.count}<small>faltam</small></div>`;
     else if(currentFilter==="rep")fracHTML=`<div class="frac">${ss.models}<small>repetidas · ${ss.exc} p/ troca</small></div>`;
     else fracHTML=`<div class="frac">${ss.have}/${sec.count}<small>tenho</small></div>`;
-    const cols=Math.max(1,Math.ceil(cells.length/2)); // metade em cima, metade embaixo
     const div=document.createElement("div");div.className="card album-sec";
     div.innerHTML=`
       <div class="head">${flagHTML(sec)}
         <div class="t">${esc(sec.name)}<small>${esc(sec.prefix||'')} · ${sec.count} figurinhas</small></div>
         <div class="right">${fracHTML}<div class="minibar"><i style="width:${ss.pct}%"></i></div></div>
       </div>
-      <div class="grid-scroll"><div class="grid" style="grid-template-columns:repeat(${cols},minmax(46px,1fr))">${cells.join("")}</div></div>`;
+      <div class="grid">${cells.join("")}</div>`;
     wrap.appendChild(div);
   }
   if(!anything)wrap.innerHTML=`<div class="empty">Nada aqui com esse filtro/busca.${currentFilter!=="all"?' Tente "Todas".':''}</div>`;
